@@ -11,7 +11,7 @@ services:
       MYSQL_DATABASE: ${DATABASE}
       MYSQL_USER: ${USERNAME}
       MYSQL_PASSWORD: ${USERPASS}
-      TZ: 'Asia/Tokyo'
+      TZ: "Asia/Tokyo"
     ports:
       - 3306:3306
     volumes:
@@ -22,4 +22,3 @@ services:
 
 volumes:
   db-volume:
-
