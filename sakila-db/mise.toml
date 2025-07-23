@@ -1,3 +1,7 @@
 [tasks.login]
 description = "Login to the sakila-db MySQL database"
 run = "docker compose -p sakila-db exec db mysql -u root -p -D sakila"
+
+[tasks.local]
+description = "Start the sakila-db services"
+run = "docker compose -p sakila-db up -d"

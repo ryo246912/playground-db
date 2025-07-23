@@ -1,0 +1,3 @@
+[tasks.local]
+description = "run script"
+run = "go run main.go"
