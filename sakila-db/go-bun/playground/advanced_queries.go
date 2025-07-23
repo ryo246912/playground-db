@@ -38,6 +38,7 @@ func AdvancedQueryExamples(db *bun.DB) {
 	JoinExamples(db, ctx)
 	AggregationExamples(db, ctx)
 	SubqueryExamples(db, ctx)
+	TransactionExamples(db, ctx)
 }
 
 func JoinExamples(db *bun.DB, ctx context.Context) {
@@ -206,4 +207,56 @@ func SubqueryExamples(db *bun.DB, ctx context.Context) {
 	for _, actor := range popularActors {
 		fmt.Printf("%s %s: %d本\n", actor.FirstName, actor.LastName, actor.FilmCount)
 	}
+}
+
+func TransactionExamples(db *bun.DB, ctx context.Context) {
+	fmt.Println("=== トランザクションの例 ===")
+
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		log.Printf("トランザクション開始エラー: %v", err)
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			log.Printf("トランザクションエラー: %v", err)
+			rollbackErr := tx.Rollback()
+			if rollbackErr != nil {
+				log.Printf("トランザクションロールバック失敗: %v", rollbackErr)
+			} else {
+				log.Println("トランザクションがロールバックされました")
+			}
+		} else {
+			commitErr := tx.Commit()
+			if commitErr != nil {
+				log.Printf("トランザクションコミット失敗: %v", commitErr)
+				// コミット失敗は元のエラーがない場合でも、この関数のエラーとすべき
+				err = commitErr // ここで名前付き戻り値の err に代入
+				log.Println("トランザクションのコミットに失敗しました")
+			} else {
+				log.Println("トランザクションが正常にコミットされました")
+			}
+		}
+	}()
+
+	_, err = db.NewInsert().Model(&models.Actor{
+		FirstName: "山田2",
+		LastName:  "太郎2",
+	}).Exec(ctx)
+	if err != nil {
+		log.Printf("Actor作成エラー: %v", err)
+		return
+	}
+
+	_, err = db.NewInsert().Model(&models.Actor{
+		ActorID:   223,
+		FirstName: "鈴木2",
+		LastName:  "花子2",
+	}).Exec(ctx)
+	if err != nil {
+		log.Printf("Actor作成エラー: %v", err)
+		return
+	}
+	fmt.Println("新しいActorを作成しました")
 }

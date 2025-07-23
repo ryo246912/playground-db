@@ -2,6 +2,7 @@ package models
 
 import (
 	"time"
+
 	"github.com/uptrace/bun"
 )
 
@@ -21,4 +22,7 @@ type Film struct {
 	Rating             *string   `bun:"rating,default:'G'"`
 	SpecialFeatures    *string   `bun:"special_features"`
 	LastUpdate         time.Time `bun:"last_update,nullzero,default:current_timestamp"`
+
+	// Relationships
+	Language *Language `bun:"rel:belongs-to,join:language_id=language_id"`
 }
