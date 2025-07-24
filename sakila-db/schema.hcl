@@ -45,6 +45,10 @@ table "address" {
     null = true
     type = varchar(50)
   }
+  column "address3" {
+    null = true
+    type = varchar(50)
+  }
   column "district" {
     null = false
     type = varchar(20)
